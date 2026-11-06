@@ -14,4 +14,6 @@ ion-chip { font-size: 0.7rem; margin: 7px 0 0; }
 .empty-state { color: #8b7181; padding: 64px 24px; text-align: center; }
 .empty-state ion-icon { color: #e487ae; font-size: 52px; }
 .empty-state h2 { color: #321b2c; margin-bottom: 6px; }
+.load-state { align-items: center; color: #8b7181; display: flex; flex-direction: column; gap: 12px; padding: 48px 24px; }
+.load-error p { overflow-wrap: anywhere; }
 .edit-form { display: grid; gap: 18px; }

@@ -10,14 +10,14 @@ RUN npm install -g @ionic/cli
 # Copy the package files into the working directory
 COPY package*.json ./
 
-# Install application dependencies
-RUN npm install
+# Install application dependencies from the lockfile
+RUN npm ci --no-audit --no-fund
 
 # Copy the remaining project files
 COPY . .
 
 # Document the port used by the application
-EXPOSE 8100
+EXPOSE 8101
 
 # Start the Ionic development server
 CMD ["ionic", "serve", "--host=0.0.0.0", "--port=8101", "--no-open"]

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { addDoc, collection, deleteDoc, doc, Firestore, getFirestore, onSnapshot, updateDoc } from 'firebase/firestore';
-import { environment } from '../../environments/environment';
-import { initializeApp } from 'firebase/app';
+import { addDoc, collection, deleteDoc, doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { firestore } from './firebase';
 
 export interface Patient {
   id?: string;
@@ -14,8 +13,6 @@ export interface Patient {
   order: number;
 }
 
-const firebaseApp = initializeApp(environment.firebaseConfig);
-const firestore: Firestore = getFirestore(firebaseApp);
 const patientsCollection = collection(firestore, 'patients');
 
 @Injectable({ providedIn: 'root' })

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { Patient, PatientService } from '../services/patient.service';
 
@@ -14,6 +14,7 @@ export class Tab2Page {
   selectedStatus = 'All';
   isEditModalOpen = false;
   isLoading = false;
+  loadError = '';
   isToastOpen = false;
   toastMessage = '';
   editingPatient: Patient = this.emptyPatient();
@@ -23,17 +24,37 @@ export class Tab2Page {
     private patientService: PatientService,
     private loadingController: LoadingController,
     private toastController: ToastController,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {}
 
   ionViewWillEnter(): void {
+    this.loadPatients();
+  }
+
+  retryLoad(): void { this.loadPatients(); }
+
+  private loadPatients(): void {
     this.stopWatching?.();
+    this.isLoading = true;
+    this.loadError = '';
     this.stopWatching = this.patientService.watchPatients(
-      (patients) => { this.patients = patients; },
-      (error) => { this.presentToast(`Load failed: ${error.message}`, 'danger'); },
+      (patients) => {
+        this.patients = patients;
+        this.isLoading = false;
+        this.changeDetectorRef.detectChanges();
+      },
+      (error) => {
+        this.loadError = error.message;
+        this.isLoading = false;
+        this.changeDetectorRef.detectChanges();
+      },
     );
   }
 
-  ionViewDidLeave(): void { this.stopWatching?.(); }
+  ionViewDidLeave(): void {
+    this.stopWatching?.();
+    this.stopWatching = undefined;
+  }
 
   get filteredPatients(): Patient[] {
     const term = this.searchTerm.toLowerCase().trim();
