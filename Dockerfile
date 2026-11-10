@@ -1,23 +1,16 @@
-# Use Node.js 22 with Alpine Linux as the base image
-FROM node:22-alpine
+FROM node:22-alpine AS build
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Install the Ionic CLI globally
-RUN npm install -g @ionic/cli
-
-# Copy the package files into the working directory
-COPY package*.json ./
-
-# Install application dependencies from the lockfile
+COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 
-# Copy the remaining project files
 COPY . .
+RUN npm run build -- --configuration production
 
-# Document the port used by the application
-EXPOSE 8101
+FROM nginx:alpine
 
-# Start the Ionic development server
-CMD ["ionic", "serve", "--host=0.0.0.0", "--port=8101", "--no-open"]
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/www /usr/share/nginx/html
+
+EXPOSE 80

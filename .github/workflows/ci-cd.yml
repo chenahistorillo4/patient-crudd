@@ -1,4 +1,4 @@
-name: Deploy Ionic App Locally
+name: Build and Deploy Docker App
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
       - name: Checkout latest code
         uses: actions/checkout@v4
 
-      - name: Build Ionic image
+      - name: Build production image
         run: docker build -t care-directory:latest .
 
       - name: Remove previous container
@@ -23,4 +23,4 @@ jobs:
         continue-on-error: true
 
       - name: Start updated container
-        run: docker run -d --name care-directory --restart unless-stopped -p 8100:8100 care-directory:latest
+        run: docker run -d --name care-directory --restart unless-stopped -p 8100:80 care-directory:latest
